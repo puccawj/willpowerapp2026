@@ -1,0 +1,72 @@
+<div class="pad page-wrap">
+  <div class="detail-inner">
+    <a routerLink="/events" class="back-link">← All events</a>
+    <div class="hero-img"><img [src]="event().img" alt="" /></div>
+
+    <div class="detail-grid">
+      <div class="detail-main">
+        <span class="branch-pill">{{ event().branch }}</span>
+        <h1 class="detail-title">{{ event().title }}</h1>
+        <div class="detail-facts">
+          <div class="fact"><div class="fact-label">Date</div><div class="fact-value">{{ event().dateFull }}</div></div>
+          <div class="fact"><div class="fact-label">Time</div><div class="fact-value">{{ event().time }}</div></div>
+          <div class="fact"><div class="fact-label">Location</div><div class="fact-value">{{ event().location }}</div></div>
+        </div>
+        <p class="detail-body">{{ event().body1 }}</p>
+        <p class="detail-body">{{ event().body2 }}</p>
+      </div>
+
+      <aside class="detail-aside">
+        <div class="aside-card">
+          <div class="seats-row">
+            <span class="muted-label">Seats reserved</span>
+            <span class="seats-value">{{ event().going }} / {{ event().capacity }}</span>
+          </div>
+          <div class="seats-bar"><div class="seats-fill" [style.width.%]="percentFull()"></div></div>
+
+          <div class="aside-heading">Will you attend?</div>
+          <div class="rsvp-list">
+            @for (r of rsvpOptions; track r.key) {
+              <button
+                type="button"
+                [class]="'rsvp-btn rsvp-' + r.key"
+                [class.active]="rsvp() === r.key"
+                (click)="setRsvp(r.key)"
+              >
+                {{ r.label }}
+              </button>
+            }
+          </div>
+          @if (rsvp()) {
+            <div class="rsvp-msg">{{ rsvpMessage() }}</div>
+          }
+        </div>
+
+        <div class="aside-card donate-block">
+          <div class="aside-heading gold">Donate to this event</div>
+          @if (donated()) {
+            <div class="donate-thanks">
+              Thank you for your generosity. A certificate of appreciation will be emailed to you with a reference
+              number.
+            </div>
+          } @else {
+            <div class="donate-type-row">
+              @for (d of donateOptions; track d.key) {
+                <button
+                  type="button"
+                  class="donate-type-btn"
+                  [class.active]="donateType() === d.key"
+                  (click)="setDonateType(d.key)"
+                >
+                  {{ d.label }}
+                </button>
+              }
+            </div>
+            <input class="donate-input" [placeholder]="donatePlaceholder()" />
+            <button type="button" class="btn btn-gold donate-submit" (click)="submitDonate()">Submit donation</button>
+          }
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

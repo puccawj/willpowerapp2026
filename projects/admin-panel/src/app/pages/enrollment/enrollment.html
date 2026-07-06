@@ -1,0 +1,61 @@
+<div class="card pad session-banner">
+  <div>
+    <h2 class="session-title">The Path of Willpower — USA, Session 6</h2>
+    <div class="muted-label">Instructor: Ajahn Suriya · Tuesday, July 15 · 7:00–9:00 PM</div>
+  </div>
+  <button type="button" class="btn btn-outline">▤ Scan QR check-in</button>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Student</th><th>Enrolled</th><th>Cumulative attendance</th><th>This session</th><th></th></tr></thead>
+      <tbody>
+        @for (e of ctrl.pageItems(); track e.id) {
+          <tr class="row">
+            <td>
+              <div class="name-cell">
+                <div class="avatar-sm" [style.background]="e.avatarColor">{{ e.initials }}</div>{{ e.name }}
+              </div>
+            </td>
+            <td>{{ e.enrolledDate }}</td>
+            <td style="width:180px">
+              <div class="pct-row">
+                <div class="pct-track"><div class="pct-fill" [style.width.%]="e.pct" [style.background]="e.pctColor"></div></div>
+                <span class="pct-label">{{ e.pctLabel }}</span>
+              </div>
+            </td>
+            <td><span class="badge" [style.background]="e.presentColor">{{ e.presentLabel }}</span></td>
+            <td><button type="button" class="link-accent" (click)="toggle(e)">{{ e.actionLabel }}</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (e of ctrl.pageItems(); track e.id) {
+      <div class="mcard">
+        <div class="mcard-person">
+          <div class="avatar-md" [style.background]="e.avatarColor">{{ e.initials }}</div>
+          <div>
+            <div class="person-name">{{ e.name }}</div>
+            <div class="muted-label">Enrolled {{ e.enrolledDate }}</div>
+          </div>
+        </div>
+        <div class="pct-row mcard-meta">
+          <div class="pct-track"><div class="pct-fill" [style.width.%]="e.pct" [style.background]="e.pctColor"></div></div>
+          <span class="pct-label">{{ e.pctLabel }}</span>
+        </div>
+        <div class="mcard-row">
+          <span class="badge badge-sm" [style.background]="e.presentColor">{{ e.presentLabel }}</span>
+          <button type="button" class="link-accent" (click)="toggle(e)">{{ e.actionLabel }}</button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

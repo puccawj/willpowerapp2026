@@ -1,0 +1,48 @@
+<div class="page-toolbar toolbar-end">
+  <button type="button" class="btn btn-solid" (click)="addMember()">+ Add Member</button>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Name</th><th>Role</th><th>Branch</th><th>Shown on site</th><th></th></tr></thead>
+      <tbody>
+        @for (m of ctrl.pageItems(); track m.name) {
+          <tr class="row">
+            <td>
+              <div class="name-cell">
+                <div class="avatar-sm" [style.background]="m.avatarColor">{{ m.initials }}</div>{{ m.name }}
+              </div>
+            </td>
+            <td>{{ m.role }}</td>
+            <td>{{ m.branch }}</td>
+            <td>{{ m.shown }}</td>
+            <td><button type="button" class="link-accent" (click)="editMember(m)">Edit</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (m of ctrl.pageItems(); track m.name) {
+      <div class="mcard">
+        <div class="mcard-person">
+          <div class="avatar-md" [style.background]="m.avatarColor">{{ m.initials }}</div>
+          <div>
+            <div class="person-name">{{ m.name }}</div>
+            <div class="muted-label">{{ m.role }} · {{ m.branch }}</div>
+          </div>
+        </div>
+        <div class="mcard-row">
+          <span class="muted-label">Shown: {{ m.shown }}</span>
+          <button type="button" class="link-accent" (click)="editMember(m)">Edit</button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

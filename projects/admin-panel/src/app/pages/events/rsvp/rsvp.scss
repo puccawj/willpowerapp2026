@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.summary-card {
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.summary-title {
+  font: 500 21px var(--w-font-serif);
+  margin: 0 0 4px;
+}
+
+.summary-counts {
+  display: flex;
+  gap: 22px;
+  text-align: center;
+}
+
+.count-value {
+  font: 600 22px var(--w-font-serif);
+}
+
+.count-label {
+  font: 500 10.5px var(--w-font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--w-muted);
+}
+
+.qr-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}

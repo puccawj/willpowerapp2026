@@ -1,0 +1,54 @@
+<div class="page-toolbar">
+  <app-filter-tabs [options]="filterOptions" [active]="filter()" [select]="setFilter"></app-filter-tabs>
+  <button type="button" class="btn btn-solid" (click)="addEvent()">+ New Event</button>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead>
+        <tr><th>Event</th><th>Branch</th><th>Date &amp; time</th><th>Capacity</th><th>RSVP</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (ev of ctrl.pageItems(); track ev.id) {
+          <tr class="row">
+            <td style="font-weight:500">{{ ev.title }}</td>
+            <td>{{ ev.branch }}</td>
+            <td>{{ ev.dateFull }}</td>
+            <td>{{ ev.going }} / {{ ev.capacity }}</td>
+            <td>{{ rsvpSummary(ev) }}</td>
+            <td><span class="badge" [style.background]="statusColors[ev.status]">{{ ev.status }}</span></td>
+            <td>
+              <button type="button" class="link-accent" (click)="openRsvp(ev)">RSVP →</button>
+              <button type="button" class="link-muted" (click)="editEvent(ev)">Edit</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (ev of ctrl.pageItems(); track ev.id) {
+      <div class="mcard">
+        <div class="mcard-head">
+          <h4 class="mcard-title">{{ ev.title }}</h4>
+          <span class="badge badge-sm" [style.background]="statusColors[ev.status]">{{ ev.status }}</span>
+        </div>
+        <div class="muted-label mcard-meta">{{ ev.branch }} · {{ ev.dateFull }}</div>
+        <div class="mcard-row">
+          <span>Capacity {{ ev.going }}/{{ ev.capacity }}</span>
+          <span class="muted-label">{{ rsvpSummary(ev) }}</span>
+        </div>
+        <div class="mcard-actions">
+          <button type="button" class="link-accent" (click)="openRsvp(ev)">RSVP →</button>
+          <button type="button" class="link-muted" (click)="editEvent(ev)">Edit</button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

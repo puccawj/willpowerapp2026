@@ -1,0 +1,30 @@
+<header class="site-header">
+  <a routerLink="/" class="brand">
+    <div class="brand-mark">◈</div>
+    <div class="brand-text">
+      <span class="brand-name">Willpower Institute</span>
+      <span class="brand-name-th">สถาบันพลังจิตตานุภาพ</span>
+    </div>
+  </a>
+
+  <nav class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/events" routerLinkActive="active">Events</a>
+    <a routerLink="/courses" routerLinkActive="active">Courses</a>
+    <a routerLink="/about" routerLinkActive="active">About</a>
+    <a routerLink="/team" routerLinkActive="active">Team</a>
+  </nav>
+
+  <div class="header-actions">
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/my" routerLinkActive="active" class="account-chip">
+        <span class="account-avatar">{{ auth.currentUser()?.initials }}</span>
+        My Account
+      </a>
+      <button type="button" class="btn btn-outline logout-btn" (click)="logout()">Log out</button>
+    } @else {
+      <a routerLink="/login" class="btn btn-outline">Log in</a>
+    }
+    <a routerLink="/events/1" class="btn btn-solid">Donate</a>
+  </div>
+</header>

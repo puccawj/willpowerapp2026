@@ -1,0 +1,55 @@
+<div class="page-toolbar toolbar-end">
+  <button type="button" class="btn btn-solid" (click)="addBranch()">+ Add Branch</button>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Branch</th><th>City</th><th>Admins</th><th>Members</th><th>Events</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        @for (b of ctrl.pageItems(); track b.key) {
+          <tr class="row">
+            <td style="font-weight:500">{{ b.name }}</td>
+            <td>{{ b.city }}</td>
+            <td>{{ b.adminCount }}</td>
+            <td>{{ b.userCount }}</td>
+            <td>{{ b.eventCount }}</td>
+            <td><span class="badge" [style.background]="b.statusColor">{{ b.statusLabel }}</span></td>
+            <td>
+              <button type="button" class="link-accent" (click)="editBranch(b)">Edit</button>
+              <button type="button" class="link-muted" [style.color]="b.toggleColor" (click)="toggleStatus(b)">{{ b.toggleLabel }}</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (b of ctrl.pageItems(); track b.key) {
+      <div class="mcard">
+        <div class="mcard-head">
+          <div>
+            <h3 class="branch-name">{{ b.name }}</h3>
+            <div class="muted-label">{{ b.city }}</div>
+          </div>
+          <span class="badge badge-sm" [style.background]="b.statusColor">{{ b.statusLabel }}</span>
+        </div>
+        <div class="branch-stats">
+          <div><div class="branch-stat-value">{{ b.adminCount }}</div><div class="branch-stat-label">Admins</div></div>
+          <div><div class="branch-stat-value">{{ b.userCount }}</div><div class="branch-stat-label">Members</div></div>
+          <div><div class="branch-stat-value">{{ b.eventCount }}</div><div class="branch-stat-label">Events</div></div>
+        </div>
+        <div class="mcard-actions">
+          <button type="button" class="link-accent" (click)="editBranch(b)">Edit</button>
+          <span class="dot-sep">·</span>
+          <button type="button" class="link-muted" [style.color]="b.toggleColor" (click)="toggleStatus(b)">{{ b.toggleLabel }}</button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

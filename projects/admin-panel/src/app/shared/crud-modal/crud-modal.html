@@ -1,0 +1,61 @@
+@if (modal.config(); as cfg) {
+  <div class="overlay" (click)="modal.close()">
+    <div class="dialog" (click)="$event.stopPropagation()">
+      <div class="dialog-head">
+        <h2 class="dialog-title">{{ cfg.title }}</h2>
+        <span class="dialog-close" (click)="modal.close()">×</span>
+      </div>
+
+      <div class="dialog-fields">
+        @for (f of cfg.fields; track f.key) {
+          <div class="field">
+            <label class="field-label">{{ f.label }}</label>
+            @switch (f.type) {
+              @case ('text') {
+                <input
+                  class="form-input"
+                  [ngModel]="cfg.values[f.key]"
+                  (ngModelChange)="onFieldChange(f.key, $event)"
+                />
+              }
+              @case ('number') {
+                <input
+                  type="number"
+                  class="form-input"
+                  [ngModel]="cfg.values[f.key]"
+                  (ngModelChange)="onFieldChange(f.key, $event)"
+                />
+              }
+              @case ('select') {
+                <select
+                  class="form-input"
+                  [ngModel]="cfg.values[f.key]"
+                  (ngModelChange)="onFieldChange(f.key, $event)"
+                >
+                  @for (opt of f.options; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              }
+              @case ('image') {
+                <div class="image-slot">{{ f.label }}</div>
+              }
+            }
+          </div>
+        }
+      </div>
+
+      <div class="dialog-foot">
+        @if (cfg.isEdit) {
+          <button type="button" class="delete-link" (click)="modal.delete()">Delete</button>
+        } @else {
+          <span></span>
+        }
+        <div class="dialog-actions">
+          <button type="button" class="cancel-btn" (click)="modal.close()">Cancel</button>
+          <button type="button" class="btn btn-solid" (click)="modal.save()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

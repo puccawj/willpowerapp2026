@@ -1,0 +1,37 @@
+<div class="pad page-wrap">
+  <div class="section-inner">
+    <div class="eyebrow">Learn &amp; practice</div>
+    <h1 class="page-title">Courses</h1>
+    <p class="section-lead intro">
+      Each course opens as scheduled sessions at a branch. Log in to enroll and track your attendance toward a
+      certificate.
+    </p>
+
+    <div class="grid-2 g2">
+      @for (c of courses; track c.title) {
+        <div class="course-card-lg">
+          <div class="course-img"><img [src]="c.img" alt="" /></div>
+          <div class="course-body">
+            <div class="course-tags">
+              <span class="eyebrow small inline">{{ c.level }}</span>
+              <span class="course-format">· {{ c.format }}</span>
+            </div>
+            <h3 class="course-title-lg">{{ c.title }}</h3>
+            <p class="course-desc-lg">{{ c.desc }}</p>
+            <div class="course-stats">
+              <div class="course-stat"><div class="stat-val">{{ c.sessions }}</div><div class="stat-lbl">Sessions</div></div>
+              <div class="stat-sep-v"></div>
+              <div class="course-stat"><div class="stat-val">{{ c.hours }}</div><div class="stat-lbl">Total hours</div></div>
+              <div class="stat-sep-v"></div>
+              <div class="course-stat"><div class="stat-val">{{ c.pass }}</div><div class="stat-lbl">To pass</div></div>
+            </div>
+            <div class="course-foot">
+              <span class="open-label">{{ c.open }}</span>
+              <a routerLink="/login" class="btn btn-solid btn-sm">Enroll — log in</a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

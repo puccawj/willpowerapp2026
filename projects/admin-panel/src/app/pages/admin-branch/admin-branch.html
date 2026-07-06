@@ -1,0 +1,54 @@
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Admin</th><th>Email</th><th>Branches assigned</th><th>Primary</th><th></th></tr></thead>
+      <tbody>
+        @for (a of ctrl.pageItems(); track a.id) {
+          <tr class="row">
+            <td style="font-weight:500">{{ a.name }}</td>
+            <td class="muted-cell">{{ a.email }}</td>
+            <td>
+              <div class="chip-row">
+                @for (c of a.chips; track c.key) {
+                  <button
+                    type="button"
+                    class="chip"
+                    [class.on]="c.on"
+                    (click)="toggleChip(a, c)"
+                  >
+                    {{ c.label }} {{ c.on ? '✓' : '+' }}
+                  </button>
+                }
+              </div>
+            </td>
+            <td>{{ a.primary }}</td>
+            <td><button type="button" class="link-accent">Manage →</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (a of ctrl.pageItems(); track a.id) {
+      <div class="mcard">
+        <div class="person-name">{{ a.name }}</div>
+        <div class="muted-label mcard-meta">{{ a.email }}</div>
+        <div class="chip-row chip-row-card">
+          @for (c of a.chips; track c.key) {
+            <button type="button" class="chip" [class.on]="c.on" (click)="toggleChip(a, c)">
+              {{ c.label }} {{ c.on ? '✓' : '+' }}
+            </button>
+          }
+        </div>
+        <div class="muted-label">Primary: {{ a.primary }}</div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>
+
+<div class="hint-text">Click a branch chip to grant or revoke that admin's access.</div>

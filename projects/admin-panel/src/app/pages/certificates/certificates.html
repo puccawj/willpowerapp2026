@@ -1,0 +1,45 @@
+<div class="card pad session-banner">
+  <div>
+    <h2 class="session-title">The Path of Willpower — USA, Cohort 1</h2>
+    <div class="muted-label">Completed · Passing criteria: ≥ 80% attendance</div>
+  </div>
+  <button type="button" class="btn btn-solid" (click)="bulkIssue()">Generate all eligible</button>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Student</th><th>Attendance</th><th>Eligible</th><th>Certificate no.</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        @for (c of ctrl.pageItems(); track c.id) {
+          <tr class="row">
+            <td style="font-weight:500">{{ c.name }}</td>
+            <td>{{ c.pctLabel }}</td>
+            <td><span class="badge" [style.background]="c.eligibleColor">{{ c.eligibleLabel }}</span></td>
+            <td class="muted-cell">{{ c.displayCertNo }}</td>
+            <td>{{ c.issueLabel }}</td>
+            <td><button type="button" class="link-accent" [style.color]="c.actionColor" (click)="toggle(c)">{{ c.actionLabel }}</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (c of ctrl.pageItems(); track c.id) {
+      <div class="mcard">
+        <div class="mcard-head">
+          <h4 class="mcard-title mcard-title-sans">{{ c.name }}</h4>
+          <span class="badge badge-sm" [style.background]="c.eligibleColor">{{ c.eligibleLabel }}</span>
+        </div>
+        <div class="muted-label">Attendance {{ c.pctLabel }}</div>
+        <div class="muted-label mcard-meta">{{ c.displayCertNo }} · {{ c.issueLabel }}</div>
+        <button type="button" class="link-accent" [style.color]="c.actionColor" (click)="toggle(c)">{{ c.actionLabel }}</button>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

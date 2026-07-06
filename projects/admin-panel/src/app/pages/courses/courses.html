@@ -1,0 +1,58 @@
+@if (!roleService.isInstructor()) {
+  <div class="page-toolbar toolbar-end">
+    <button type="button" class="btn btn-solid" (click)="addCourse()">+ New Course</button>
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Course</th><th>Category</th><th>Sessions</th><th>Total hours</th><th>Passing %</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        @for (c of ctrl.pageItems(); track c.title) {
+          <tr class="row">
+            <td style="font-weight:500">{{ c.title }}</td>
+            <td>{{ c.category }}</td>
+            <td>{{ c.sessions }}</td>
+            <td>{{ c.hours }}</td>
+            <td>{{ c.pass }}</td>
+            <td><span class="badge" style="background:var(--w-green)">{{ c.status }}</span></td>
+            <td>
+              <button type="button" class="link-accent" (click)="goSchedule()">Offerings →</button>
+              @if (!roleService.isInstructor()) {
+                <button type="button" class="link-muted" (click)="editCourse(c)">Edit</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (c of ctrl.pageItems(); track c.title) {
+      <div class="mcard">
+        <div class="mcard-head">
+          <h4 class="mcard-title">{{ c.title }}</h4>
+          <span class="badge badge-sm" style="background:var(--w-green)">{{ c.status }}</span>
+        </div>
+        <div class="muted-label mcard-meta">{{ c.category }}</div>
+        <div class="course-facts">
+          <span>{{ c.sessions }} sessions</span>
+          <span>{{ c.hours }}h</span>
+          <span>{{ c.pass }} to pass</span>
+        </div>
+        <div class="mcard-actions">
+          <button type="button" class="link-accent" (click)="goSchedule()">Offerings →</button>
+          @if (!roleService.isInstructor()) {
+            <button type="button" class="link-muted" (click)="editCourse(c)">Edit</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

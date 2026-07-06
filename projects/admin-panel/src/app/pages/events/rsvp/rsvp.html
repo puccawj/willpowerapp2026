@@ -1,0 +1,53 @@
+<button type="button" class="link-muted back-link" (click)="goEvents()">← All events</button>
+
+<div class="card summary-card">
+  <div>
+    <h2 class="summary-title">{{ event().title }}</h2>
+    <div class="muted-label">{{ event().branch }} · {{ event().dateFull }}</div>
+  </div>
+  <div class="summary-counts">
+    <div class="count-block"><div class="count-value" style="color:var(--w-green)">{{ event().going }}</div><div class="count-label">Confirmed</div></div>
+    <div class="count-block"><div class="count-value" style="color:var(--w-gold)">{{ event().maybe }}</div><div class="count-label">Maybe</div></div>
+    <div class="count-block"><div class="count-value" style="color:var(--w-red)">{{ event().cancel }}</div><div class="count-label">Cancelled</div></div>
+    <div class="count-block"><div class="count-value" style="color:var(--w-accent)">{{ event().waitlist }}</div><div class="count-label">Waitlist</div></div>
+  </div>
+</div>
+
+<div class="qr-row">
+  <button type="button" class="btn btn-outline">▤ Scan QR check-in</button>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Name</th><th>RSVP status</th><th>Checked in</th><th></th></tr></thead>
+      <tbody>
+        @for (a of ctrl.pageItems(); track a.id) {
+          <tr class="row">
+            <td style="font-weight:500">{{ a.name }}</td>
+            <td><span class="badge" [style.background]="rsvpColor[a.rsvp]">{{ rsvpLabel[a.rsvp] }}</span></td>
+            <td>{{ a.checkedIn ? '✓ Checked in' : '—' }}</td>
+            <td><button type="button" class="link-accent" (click)="toggleCheckin(a)">{{ a.checkedIn ? 'Undo' : 'Mark present' }}</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (a of ctrl.pageItems(); track a.id) {
+      <div class="mcard">
+        <div class="mcard-head">
+          <h4 class="mcard-title mcard-title-sans">{{ a.name }}</h4>
+          <span class="badge badge-sm" [style.background]="rsvpColor[a.rsvp]">{{ rsvpLabel[a.rsvp] }}</span>
+        </div>
+        <div class="muted-label mcard-meta">Checked in: {{ a.checkedIn ? '✓ Checked in' : '—' }}</div>
+        <button type="button" class="link-accent" (click)="toggleCheckin(a)">{{ a.checkedIn ? 'Undo' : 'Mark present' }}</button>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

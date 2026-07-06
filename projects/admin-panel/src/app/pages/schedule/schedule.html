@@ -1,0 +1,77 @@
+@if (!roleService.isInstructor()) {
+  <div class="page-toolbar toolbar-end">
+    <button type="button" class="btn btn-solid" (click)="addOffering()">+ New Offering</button>
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Course</th><th>Branch</th><th>Instructor</th><th>Dates</th><th>Capacity</th><th>Mode</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        @for (o of ctrl.pageItems(); track o.course + o.branch) {
+          <tr class="row">
+            <td style="font-weight:500">{{ o.course }}</td>
+            <td>{{ o.branch }}</td>
+            <td>{{ o.instructor }}</td>
+            <td>{{ o.dates }}</td>
+            <td>{{ o.enrolled }} / {{ o.capacity }}</td>
+            <td>{{ o.mode }}</td>
+            <td><span class="badge" [style.background]="statusColors[o.status]">{{ o.status }}</span></td>
+            <td>
+              <button type="button" class="link-accent" (click)="goEnrollment()">Sessions →</button>
+              @if (!roleService.isInstructor()) {
+                <button type="button" class="link-muted" (click)="editOffering(o)">Edit</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (o of ctrl.pageItems(); track o.course + o.branch) {
+      <div class="mcard">
+        <div class="mcard-head">
+          <h4 class="mcard-title">{{ o.course }}</h4>
+          <span class="badge badge-sm" [style.background]="statusColors[o.status]">{{ o.status }}</span>
+        </div>
+        <div class="muted-label">{{ o.branch }} · {{ o.instructor }}</div>
+        <div class="muted-label mcard-meta">{{ o.dates }} · {{ o.mode }}</div>
+        <div class="mcard-row">
+          <span>{{ o.enrolled }}/{{ o.capacity }} enrolled</span>
+          <div class="mcard-actions">
+            <button type="button" class="link-accent" (click)="goEnrollment()">Sessions →</button>
+            @if (!roleService.isInstructor()) {
+              <button type="button" class="link-muted" (click)="editOffering(o)">Edit</button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>
+
+<div class="card pad calendar-card">
+  <h3 class="section-title calendar-title">Session calendar — The Path of Willpower (USA · Suriya)</h3>
+  <div class="session-list">
+    @for (s of sessions(); track s.day + s.mon + s.topic) {
+      <div class="session-row">
+        <div class="session-date">
+          <div class="session-day">{{ s.day }}</div>
+          <div class="session-mon">{{ s.mon }}</div>
+        </div>
+        <div class="session-info">
+          <div class="session-topic">{{ s.topic }}</div>
+          <div class="muted-label">{{ s.time }} · {{ s.location }}</div>
+        </div>
+        <span class="badge" [style.background]="s.color">{{ s.label }}</span>
+      </div>
+    }
+  </div>
+</div>

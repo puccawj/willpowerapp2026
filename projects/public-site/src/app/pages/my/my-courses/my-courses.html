@@ -1,0 +1,28 @@
+<div class="section-block">
+  <h2 class="block-title my-courses-title">Your learning</h2>
+
+  @if (enrollments.length) {
+    <div class="course-rows">
+      @for (e of enrollments; track e.courseTitle) {
+        <div class="course-row">
+          <div class="course-row-head">
+            <div>
+              <div class="course-row-title">{{ e.courseTitle }}</div>
+              <div class="muted-label">{{ e.level }} · {{ e.branch }}</div>
+            </div>
+            <span class="status-pill" [class]="'status-' + e.status">{{ e.status === 'in-progress' ? 'In progress' : e.status === 'completed' ? 'Completed' : 'Not passed' }}</span>
+          </div>
+          <div class="attendance-row">
+            <div class="attendance-track">
+              <div class="attendance-fill" [style.width.%]="e.attendancePct" [class.pass]="e.attendancePct >= e.passPct"></div>
+            </div>
+            <span class="attendance-label">{{ e.attendancePct }}% attendance</span>
+          </div>
+          <div class="muted-label">{{ e.sessionsAttended }} / {{ e.sessionsTotal }} sessions attended · Pass mark {{ e.passPct }}%</div>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="empty-note">You're not enrolled in any courses yet.</p>
+  }
+</div>

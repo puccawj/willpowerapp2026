@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.branch-name {
+  font: 500 19px var(--w-font-serif);
+  margin: 0 0 3px;
+}
+
+.branch-stats {
+  display: flex;
+  gap: 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--w-border);
+  border-bottom: 1px solid var(--w-border);
+  margin-bottom: 14px;
+}
+
+.branch-stat-value {
+  font: 500 17px var(--w-font-serif);
+}
+
+.branch-stat-label {
+  font: 500 10px var(--w-font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--w-muted);
+}

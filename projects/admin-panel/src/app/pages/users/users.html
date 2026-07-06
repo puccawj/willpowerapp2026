@@ -1,0 +1,60 @@
+<div class="page-toolbar">
+  <app-filter-tabs [options]="filterOptions" [active]="filter()" [select]="setFilter"></app-filter-tabs>
+  <div class="toolbar-actions">
+    <button type="button" class="btn btn-outline">⇪ Import Excel</button>
+    <button type="button" class="btn btn-solid" (click)="addUser()">+ Add User</button>
+  </div>
+</div>
+
+<app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
+
+@if (ctrl.view() === 'table') {
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead><tr><th>Name</th><th>Role</th><th>Branch</th><th>Email</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        @for (u of ctrl.pageItems(); track u.id) {
+          <tr class="row">
+            <td>
+              <div class="name-cell">
+                <div class="avatar-sm" [style.background]="u.avatarColor">{{ u.initials }}</div>{{ u.name }}
+              </div>
+            </td>
+            <td>{{ u.role }}</td>
+            <td>{{ u.branch }}</td>
+            <td class="muted-cell">{{ u.email }}</td>
+            <td><span class="badge" [style.background]="u.statusColor">{{ u.statusLabel }}</span></td>
+            <td>
+              <button type="button" class="link-accent" [style.color]="u.actionColor" (click)="toggleStatus(u)">{{ u.actionLabel }}</button>
+              <button type="button" class="link-muted" (click)="editUser(u)">Edit</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="cardgrid">
+    @for (u of ctrl.pageItems(); track u.id) {
+      <div class="mcard">
+        <div class="mcard-person">
+          <div class="avatar-md" [style.background]="u.avatarColor">{{ u.initials }}</div>
+          <div>
+            <div class="person-name">{{ u.name }}</div>
+            <div class="muted-label">{{ u.role }} · {{ u.branch }}</div>
+          </div>
+        </div>
+        <div class="muted-label mcard-meta">{{ u.email }}</div>
+        <div class="mcard-row">
+          <span class="badge badge-sm" [style.background]="u.statusColor">{{ u.statusLabel }}</span>
+          <div class="mcard-actions">
+            <button type="button" class="link-accent" [style.color]="u.actionColor" (click)="toggleStatus(u)">{{ u.actionLabel }}</button>
+            <button type="button" class="link-muted" (click)="editUser(u)">Edit</button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>

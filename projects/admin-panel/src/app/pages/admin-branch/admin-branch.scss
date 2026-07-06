@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.chip-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip-row-card {
+  margin: 10px 0;
+}
+
+.chip {
+  color: var(--w-ink-soft);
+  border-color: var(--w-border-strong);
+
+  &.on {
+    background: var(--w-accent);
+    color: #fff;
+    border-color: var(--w-accent);
+  }
+}
+
+.hint-text {
+  margin-top: 12px;
+  font: 400 12px var(--w-font-sans);
+  color: var(--w-muted);
+}

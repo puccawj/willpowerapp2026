@@ -1,0 +1,23 @@
+<div class="section-block">
+  <h2 class="block-title my-donations-title">Your donations</h2>
+
+  @if (donations.length) {
+    <div class="donation-rows">
+      @for (d of donations; track d.id) {
+        <div class="donation-row">
+          <div>
+            <div class="donation-row-title">{{ d.type }} · {{ d.amountLabel }}</div>
+            <div class="muted-label">{{ d.date }} · {{ d.event }}</div>
+          </div>
+          @if (d.certNo) {
+            <button type="button" class="btn btn-outline">Download receipt</button>
+          } @else {
+            <span class="muted-label">Pending certificate</span>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="empty-note">You haven't made any donations yet.</p>
+  }
+</div>

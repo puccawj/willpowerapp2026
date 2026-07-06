@@ -1,0 +1,43 @@
+<div class="page-toolbar toolbar-end">
+  <button type="button" class="btn btn-solid" (click)="addTemplate()">⇪ Upload new template</button>
+</div>
+
+<div class="template-grid">
+  @for (t of rows(); track t.id) {
+    <div class="card template-card">
+      <div class="template-preview" [style.background]="t.bg">
+        <div class="template-preview-frame"></div>
+        <div class="template-preview-copy">
+          <div class="template-preview-kicker">CERTIFICATE OF COMPLETION</div>
+          <div class="template-preview-name">Jane Q. Student</div>
+          <div class="template-preview-no">No. {{ t.sampleNo }}</div>
+        </div>
+      </div>
+      <div class="template-body">
+        <div class="template-head">
+          <h3 class="template-name">{{ t.name }}</h3>
+          <span class="badge badge-sm" [style.background]="t.statusColor">{{ t.statusLabel }}</span>
+        </div>
+        <div class="muted-label template-meta">{{ t.type }} · {{ t.year }}</div>
+        <div class="mcard-actions">
+          <button type="button" class="link-accent" (click)="editTemplate(t)">Edit layout</button>
+          <span class="dot-sep">·</span>
+          <button type="button" class="link-muted" [style.color]="t.toggleColor" (click)="toggleStatus(t)">{{ t.toggleLabel }}</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="card pad">
+  <h3 class="section-title">Template designer preview</h3>
+  <div class="muted-label designer-hint">Drag placeholders over the uploaded background — positions save to this template only.</div>
+  <div class="designer-canvas">
+    <div class="designer-frame"></div>
+    <div class="designer-field designer-kicker">CERTIFICATE OF COMPLETION</div>
+    <div class="designer-field designer-name">{{ recipientName }}</div>
+    <div class="designer-field designer-course">{{ courseTitle }}</div>
+    <div class="designer-field designer-certno">{{ certificateNo }}</div>
+    <div class="designer-field designer-date">{{ issueDate }}</div>
+  </div>
+</div>

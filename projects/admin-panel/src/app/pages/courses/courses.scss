@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+.course-facts {
+  display: flex;
+  gap: 16px;
+  font: 500 12.5px var(--w-font-sans);
+  margin-bottom: 10px;
+}
