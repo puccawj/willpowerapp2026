@@ -20,5 +20,6 @@ fs.cpSync(path.join(root, 'dist', 'public-site', 'browser'), outDir, { recursive
 fs.cpSync(path.join(root, 'dist', 'admin-panel', 'browser'), path.join(outDir, 'admin'), {
   recursive: true,
 });
+fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
 
 console.log(`Combined site ready at ${outDir}`);
