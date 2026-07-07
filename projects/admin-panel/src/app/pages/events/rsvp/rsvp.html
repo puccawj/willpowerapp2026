@@ -14,8 +14,45 @@
 </div>
 
 <div class="qr-row">
-  <button type="button" class="btn btn-outline">▤ Scan QR check-in</button>
+  @if (event().waitlist > 0 && event().going < event().capacity) {
+    <button type="button" class="btn btn-outline" (click)="promoteFromWaitlist()">Promote from waitlist</button>
+  }
+  <button type="button" class="btn btn-outline" (click)="simulateRsvp()">+ Simulate new RSVP</button>
+  <button type="button" class="btn btn-outline" (click)="openQrScanner()">▤ Scan QR check-in</button>
 </div>
+
+@if (qrOpen()) {
+  <div class="qr-overlay" (click)="closeQrScanner()">
+    <div class="qr-dialog" (click)="$event.stopPropagation()">
+      <div class="qr-dialog-head">
+        <h3 class="qr-dialog-title">Scan QR check-in</h3>
+        <span class="qr-dialog-close" (click)="closeQrScanner()">×</span>
+      </div>
+      <p class="muted-label qr-dialog-hint">Simulated scanner — search by name to check a guest in on arrival.</p>
+      <input
+        class="form-input"
+        placeholder="Search by name…"
+        [value]="qrSearch()"
+        (input)="qrSearch.set($any($event.target).value)"
+      />
+      <div class="qr-result-list">
+        @for (a of qrResults(); track a.id) {
+          <div class="qr-result-row">
+            <span>{{ a.name }}</span>
+            @if (a.checkedIn) {
+              <span class="badge badge-sm" style="background:var(--w-green)">✓ Checked in</span>
+            } @else {
+              <button type="button" class="btn btn-solid btn-sm" (click)="checkInFromScanner(a)">Check in</button>
+            }
+          </div>
+        }
+        @if (!qrResults().length) {
+          <div class="qr-empty">No matching guest found.</div>
+        }
+      </div>
+    </div>
+  </div>
+}
 
 <app-table-toolbar [controller]="ctrl" slot="top"></app-table-toolbar>
 

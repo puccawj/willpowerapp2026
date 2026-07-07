@@ -4,8 +4,11 @@
 
 <div class="template-grid">
   @for (t of rows(); track t.id) {
-    <div class="card template-card">
-      <div class="template-preview" [style.background]="t.bg">
+    <div class="card template-card" [class.selected]="selectedTemplate()?.id === t.id" (click)="selectForDesign(t)">
+      <div class="template-preview" [style.background]="t.bgImage ? 'none' : t.bg">
+        @if (t.bgImage) {
+          <img [src]="t.bgImage" alt="" class="template-preview-img" />
+        }
         <div class="template-preview-frame"></div>
         <div class="template-preview-copy">
           <div class="template-preview-kicker">CERTIFICATE OF COMPLETION</div>
@@ -20,9 +23,11 @@
         </div>
         <div class="muted-label template-meta">{{ t.type }} · {{ t.year }}</div>
         <div class="mcard-actions">
-          <button type="button" class="link-accent" (click)="editTemplate(t)">Edit layout</button>
+          <button type="button" class="link-accent" (click)="$event.stopPropagation(); selectForDesign(t)">Edit layout</button>
           <span class="dot-sep">·</span>
-          <button type="button" class="link-muted" [style.color]="t.toggleColor" (click)="toggleStatus(t)">{{ t.toggleLabel }}</button>
+          <button type="button" class="link-muted" (click)="$event.stopPropagation(); editTemplate(t)">Edit details</button>
+          <span class="dot-sep">·</span>
+          <button type="button" class="link-muted" [style.color]="t.toggleColor" (click)="$event.stopPropagation(); toggleStatus(t)">{{ t.toggleLabel }}</button>
         </div>
       </div>
     </div>
@@ -30,14 +35,30 @@
 </div>
 
 <div class="card pad">
-  <h3 class="section-title">Template designer preview</h3>
-  <div class="muted-label designer-hint">Drag placeholders over the uploaded background — positions save to this template only.</div>
-  <div class="designer-canvas">
+  <h3 class="section-title">Template designer — {{ selectedTemplate()?.name }}</h3>
+  <div class="muted-label designer-hint">Drag placeholders over the background — positions save to this template only.</div>
+  <div
+    class="designer-canvas"
+    #designerCanvas
+    [style.background]="selectedTemplate()?.bgImage ? 'none' : selectedTemplate()?.bg"
+    (pointermove)="onCanvasPointerMove($event)"
+    (pointerup)="endDrag()"
+    (pointerleave)="endDrag()"
+  >
+    @if (selectedTemplate()?.bgImage) {
+      <img [src]="selectedTemplate()?.bgImage" alt="" class="designer-bg-img" />
+    }
     <div class="designer-frame"></div>
-    <div class="designer-field designer-kicker">CERTIFICATE OF COMPLETION</div>
-    <div class="designer-field designer-name">{{ recipientName }}</div>
-    <div class="designer-field designer-course">{{ courseTitle }}</div>
-    <div class="designer-field designer-certno">{{ certificateNo }}</div>
-    <div class="designer-field designer-date">{{ issueDate }}</div>
+    @for (f of designerFields; track f.key) {
+      <div
+        class="designer-field"
+        [class]="'designer-' + f.key"
+        [style.left.%]="positionOf(f.key).xPct"
+        [style.top.%]="positionOf(f.key).yPct"
+        (pointerdown)="startDrag(f.key, $event)"
+      >
+        {{ f.label }}
+      </div>
+    }
   </div>
 </div>

@@ -52,3 +52,19 @@
 <app-table-toolbar [controller]="ctrl" slot="bottom"></app-table-toolbar>
 
 <div class="hint-text">Click a branch chip to grant or revoke that admin's access.</div>
+
+<div class="card pad audit-card">
+  <h3 class="section-title audit-title">Recent access changes</h3>
+  @if (auditLog.entries().length) {
+    <div class="audit-list">
+      @for (e of auditLog.entries(); track e.id) {
+        <div class="audit-row">
+          <div class="audit-action">{{ e.action }}</div>
+          <div class="muted-label audit-meta">{{ e.actor }} · {{ timeAgo(e.timestamp) }}</div>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="empty-note">No access changes yet this session.</p>
+  }
+</div>

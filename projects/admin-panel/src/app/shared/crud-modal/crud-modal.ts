@@ -14,4 +14,12 @@ export class CrudModal {
   onFieldChange(key: string, value: string): void {
     this.modal.setFieldValue(key, value);
   }
+
+  onImageSelected(key: string, input: HTMLInputElement): void {
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => this.modal.setFieldValue(key, String(reader.result));
+    reader.readAsDataURL(file);
+  }
 }

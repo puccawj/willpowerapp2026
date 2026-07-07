@@ -1,7 +1,14 @@
 <div class="page-toolbar">
   <app-filter-tabs [options]="filterOptions" [active]="filter()" [select]="setFilter"></app-filter-tabs>
   <div class="toolbar-actions">
-    <button type="button" class="btn btn-outline">⇪ Import Excel</button>
+    <button type="button" class="btn btn-outline" (click)="importInput.click()">⇪ Import Excel</button>
+    <input
+      #importInput
+      type="file"
+      accept=".xlsx,.xls,.csv"
+      class="hidden-file-input"
+      (change)="$any($event.target).files[0] && importFromFile($any($event.target).files[0]); $any($event.target).value = ''"
+    />
     <button type="button" class="btn btn-solid" (click)="addUser()">+ Add User</button>
   </div>
 </div>

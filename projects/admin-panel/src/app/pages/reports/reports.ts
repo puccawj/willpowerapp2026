@@ -1,6 +1,9 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FilterTabs, FilterOption } from '../../shared/filter-tabs/filter-tabs';
 import { StatCards, StatCardData } from '../../shared/stat-cards/stat-cards';
+import { ExcelService } from '../../core/services/excel.service';
+import { PdfService } from '../../core/services/pdf.service';
+import { ToastService } from '../../core/services/toast.service';
 
 interface ReportBar {
   name: string;
@@ -76,6 +79,10 @@ const REPORT_DATA: Record<string, ReportTabData> = {
   styleUrl: './reports.scss',
 })
 export class Reports {
+  private readonly excel = inject(ExcelService);
+  private readonly pdf = inject(PdfService);
+  private readonly toast = inject(ToastService);
+
   readonly tab = signal('events');
 
   readonly tabOptions: FilterOption[] = [
@@ -88,4 +95,29 @@ export class Reports {
   readonly current = computed(() => REPORT_DATA[this.tab()]);
 
   setTab = (key: string) => this.tab.set(key);
+
+  private tabLabel(): string {
+    return this.tabOptions.find((t) => t.key === this.tab())?.label ?? this.tab();
+  }
+
+  exportExcel(): void {
+    const c = this.current();
+    const rows = [
+      ...c.stats.map((s) => ({ Section: 'Summary', Metric: s.label, Value: String(s.value) })),
+      ...c.bars.map((b) => ({ Section: c.title, Metric: b.name, Value: b.value })),
+    ];
+    this.excel.exportRows(`willpower-${this.tab()}-report`, this.tabLabel(), rows);
+    this.toast.show(`${this.tabLabel()} report exported to Excel.`, 'success');
+  }
+
+  exportPdf(): void {
+    const c = this.current();
+    this.pdf.downloadReport({
+      reportName: `${this.tabLabel()} report`,
+      stats: c.stats,
+      chartTitle: c.title,
+      rows: c.bars.map((b) => ({ name: b.name, value: b.value })),
+    });
+    this.toast.show(`${this.tabLabel()} report exported to PDF.`, 'success');
+  }
 }

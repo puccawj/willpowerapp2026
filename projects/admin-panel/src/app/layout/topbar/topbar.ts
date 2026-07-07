@@ -1,8 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RoleService } from '../../core/services/role.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { LayoutService } from '../../core/services/layout.service';
 
 @Component({
   selector: 'app-topbar',
@@ -14,6 +16,23 @@ export class Topbar {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   readonly roleService = inject(RoleService);
+  readonly notifications = inject(NotificationService);
+  readonly layout = inject(LayoutService);
+  readonly bellOpen = signal(false);
+
+  toggleBell(): void {
+    this.bellOpen.update((v) => !v);
+    if (this.bellOpen()) this.notifications.markAllRead();
+  }
+
+  timeAgo(date: Date): string {
+    const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.round(minutes / 60);
+    return `${hours}h ago`;
+  }
 
   private readonly routeData = toSignal(
     this.router.events.pipe(

@@ -1,10 +1,15 @@
-<aside class="sidebar">
+@if (layout.mobileMenuOpen()) {
+  <div class="mobile-backdrop" (click)="layout.closeMobileMenu()"></div>
+}
+
+<aside class="sidebar" [class.mobile-open]="layout.mobileMenuOpen()">
   <div class="brand">
     <div class="brand-mark">◈</div>
     <div class="brand-text">
       <div class="brand-name">Willpower</div>
       <div class="brand-sub">ADMIN PANEL</div>
     </div>
+    <button type="button" class="mobile-close" (click)="layout.closeMobileMenu()">×</button>
   </div>
 
   <div class="role-switch-wrap">
@@ -29,7 +34,7 @@
     @for (group of visibleGroups(); track group.header) {
       <div class="nav-header">{{ group.header }}</div>
       @for (item of group.items; track item.path) {
-        <a [routerLink]="['/', item.path]" routerLinkActive="active" class="nav-link">
+        <a [routerLink]="['/', item.path]" routerLinkActive="active" class="nav-link" (click)="onNavClick()">
           <span class="nav-icon">{{ item.icon }}</span>{{ item.label }}
         </a>
       }

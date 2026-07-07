@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { RoleService } from '../../core/services/role.service';
+import { LayoutService } from '../../core/services/layout.service';
 import { Role } from '../../core/models/admin.models';
 
 interface NavItem {
@@ -26,6 +27,7 @@ const ALL_STAFF: Role[] = ['superadmin', 'admin'];
 export class Sidebar {
   private readonly router = inject(Router);
   readonly roleService = inject(RoleService);
+  readonly layout = inject(LayoutService);
 
   private readonly groups: NavGroup[] = [
     { header: 'Overview', items: [{ path: 'dashboard', label: 'Dashboard', icon: '◆', allow: ALL_STAFF }] },
@@ -78,5 +80,9 @@ export class Sidebar {
     if (!stillVisible) {
       this.router.navigate([role === 'instructor' ? '/courses' : '/dashboard']);
     }
+  }
+
+  onNavClick(): void {
+    this.layout.closeMobileMenu();
   }
 }

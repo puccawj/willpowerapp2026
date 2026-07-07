@@ -28,3 +28,39 @@
   font: 400 12px var(--w-font-sans);
   color: var(--w-muted);
 }
+
+.audit-card {
+  margin-top: 22px;
+}
+
+.audit-title {
+  margin-bottom: 14px;
+}
+
+.audit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.audit-row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--w-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.audit-action {
+  font: 500 13.5px var(--w-font-sans);
+}
+
+.audit-meta {
+  margin-top: 2px;
+}
+
+.empty-note {
+  font: 400 13px var(--w-font-sans);
+  color: var(--w-muted);
+}

@@ -1,6 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { AdminDataService } from '../../core/services/admin-data.service';
 import { CrudModalService } from '../../core/services/crud-modal.service';
+import { PdfService } from '../../core/services/pdf.service';
+import { ToastService } from '../../core/services/toast.service';
 import { ListController } from '../../core/list-controller';
 import { TableToolbar } from '../../shared/table-toolbar/table-toolbar';
 import { FilterTabs, FilterOption } from '../../shared/filter-tabs/filter-tabs';
@@ -17,6 +19,7 @@ interface DonationRow extends Donation {
   actionLabel: string;
   isVerify: boolean;
   isIssue: boolean;
+  isResend: boolean;
 }
 
 const STATUS_COLOR: Record<DonationStatus, string> = {
@@ -51,6 +54,8 @@ const FIELDS: FieldDef[] = [
 export class Donations {
   private readonly data = inject(AdminDataService);
   private readonly modal = inject(CrudModalService);
+  private readonly pdf = inject(PdfService);
+  private readonly toast = inject(ToastService);
 
   readonly filter = signal('all');
 
@@ -80,6 +85,7 @@ export class Donations {
         actionLabel: isVerify ? 'Verify' : isIssue ? 'Issue certificate' : 'Resend email',
         isVerify,
         isIssue,
+        isResend: !isVerify && !isIssue,
       };
     });
   });
@@ -108,9 +114,31 @@ export class Donations {
   action(row: DonationRow): void {
     if (row.isVerify) {
       this.data.donationStatus.update((m) => ({ ...m, [row.id]: 'verified' }));
-    } else if (row.isIssue) {
+      this.toast.show(`Donation from ${row.donorLabel} verified.`, 'success');
+      return;
+    }
+
+    const certNo = row.certNo ?? `WPI-${row.branch.slice(0, 2).toUpperCase()}-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+    if (!row.certNo) {
+      this.data.donations.update((list) => list.map((d) => (d.id === row.id ? { ...d, certNo } : d)));
+    }
+    if (row.isIssue) {
       this.data.donationCert.update((m) => ({ ...m, [row.id]: true }));
     }
+
+    this.pdf.downloadCertificate({
+      kind: 'Certificate of Appreciation',
+      recipientName: row.donorLabel,
+      bodyLine: `In grateful acknowledgement of your generous donation of ${row.amount} toward ${row.event === '—' ? 'the institute' : row.event}.`,
+      refNo: certNo,
+      issueDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    });
+    this.toast.show(
+      row.isResend
+        ? `Anumodana certificate re-sent to ${row.donorLabel} by email (simulated) — PDF downloaded.`
+        : `Anumodana certificate issued to ${row.donorLabel} and emailed (simulated) — PDF downloaded.`,
+      'success',
+    );
   }
 
   addDonation(): void {

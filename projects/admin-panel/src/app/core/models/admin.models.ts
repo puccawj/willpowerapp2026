@@ -109,13 +109,20 @@ export interface CertStudent {
   certNo: string;
 }
 
+export interface FieldPosition {
+  xPct: number;
+  yPct: number;
+}
+
 export interface CertTemplate {
   id: string;
   name: string;
   type: string;
   year: string;
   bg: string;
+  bgImage?: string;
   sampleNo: string;
+  fieldPositions?: Record<'kicker' | 'name' | 'course' | 'certNo' | 'issueDate', FieldPosition>;
 }
 
 export interface TeamMember {
@@ -135,7 +142,7 @@ export type EntityType =
   | 'team'
   | 'template';
 
-export type FieldType = 'text' | 'number' | 'select' | 'image';
+export type FieldType = 'text' | 'number' | 'select' | 'image' | 'datetime';
 
 export interface FieldDef {
   key: string;

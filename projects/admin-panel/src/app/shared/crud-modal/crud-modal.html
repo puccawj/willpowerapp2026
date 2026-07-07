@@ -26,6 +26,14 @@
                   (ngModelChange)="onFieldChange(f.key, $event)"
                 />
               }
+              @case ('datetime') {
+                <input
+                  type="datetime-local"
+                  class="form-input"
+                  [ngModel]="cfg.values[f.key]"
+                  (ngModelChange)="onFieldChange(f.key, $event)"
+                />
+              }
               @case ('select') {
                 <select
                   class="form-input"
@@ -38,7 +46,21 @@
                 </select>
               }
               @case ('image') {
-                <div class="image-slot">{{ f.label }}</div>
+                <label class="image-slot" [class.has-image]="cfg.values[f.key]">
+                  @if (cfg.values[f.key]) {
+                    <img [src]="cfg.values[f.key]" alt="" class="image-slot-preview" />
+                    <span class="image-slot-replace">Click to replace</span>
+                  } @else {
+                    <span>⇪ Click to upload {{ f.label }}</span>
+                  }
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="hidden-file-input"
+                    #fileInput
+                    (change)="onImageSelected(f.key, fileInput)"
+                  />
+                </label>
               }
             }
           </div>

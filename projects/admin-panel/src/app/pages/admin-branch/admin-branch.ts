@@ -1,5 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { AdminDataService } from '../../core/services/admin-data.service';
+import { AuditLogService } from '../../core/services/audit-log.service';
+import { RoleService } from '../../core/services/role.service';
 import { ListController } from '../../core/list-controller';
 import { TableToolbar } from '../../shared/table-toolbar/table-toolbar';
 
@@ -31,6 +33,8 @@ const BRANCH_KEYS: { key: string; label: string }[] = [
 })
 export class AdminBranch {
   private readonly data = inject(AdminDataService);
+  private readonly roleService = inject(RoleService);
+  readonly auditLog = inject(AuditLogService);
 
   private readonly rows = computed<AdminAssignment[]>(() => {
     const access = this.data.adminAccess();
@@ -46,9 +50,23 @@ export class AdminBranch {
   readonly ctrl = new ListController<AdminAssignment>(this.rows);
 
   toggleChip(row: AdminAssignment, chip: Chip): void {
+    const granting = !chip.on;
     this.data.adminAccess.update((access) => ({
       ...access,
-      [row.id]: { ...access[row.id], [chip.key]: !access[row.id][chip.key] },
+      [row.id]: { ...access[row.id], [chip.key]: granting },
     }));
+    this.auditLog.record(
+      `${this.roleService.role() === 'superadmin' ? 'Superadmin' : 'Admin'} (you)`,
+      `${granting ? 'Granted' : 'Revoked'} ${chip.label} access ${granting ? 'to' : 'from'} ${row.name}`,
+    );
+  }
+
+  timeAgo(date: Date): string {
+    const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.round(minutes / 60);
+    return `${hours}h ago`;
   }
 }

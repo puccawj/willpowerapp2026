@@ -11,7 +11,7 @@
     <table>
       <thead><tr><th>Course</th><th>Branch</th><th>Instructor</th><th>Dates</th><th>Capacity</th><th>Mode</th><th>Status</th><th></th></tr></thead>
       <tbody>
-        @for (o of ctrl.pageItems(); track o.course + o.branch) {
+        @for (o of ctrl.pageItems(); track o.course + o.branch + o.instructor + o.dates) {
           <tr class="row">
             <td style="font-weight:500">{{ o.course }}</td>
             <td>{{ o.branch }}</td>
@@ -33,7 +33,7 @@
   </div>
 } @else {
   <div class="cardgrid">
-    @for (o of ctrl.pageItems(); track o.course + o.branch) {
+    @for (o of ctrl.pageItems(); track o.course + o.branch + o.instructor + o.dates) {
       <div class="mcard">
         <div class="mcard-head">
           <h4 class="mcard-title">{{ o.course }}</h4>

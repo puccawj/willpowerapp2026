@@ -8,8 +8,8 @@
   <div class="report-head">
     <h3 class="section-title">{{ current().title }}</h3>
     <div class="export-actions">
-      <button type="button" class="btn btn-outline">⤓ Excel</button>
-      <button type="button" class="btn btn-outline">⤓ PDF</button>
+      <button type="button" class="btn btn-outline" (click)="exportExcel()">⤓ Excel</button>
+      <button type="button" class="btn btn-outline" (click)="exportPdf()">⤓ PDF</button>
     </div>
   </div>
   <div class="bar-list">

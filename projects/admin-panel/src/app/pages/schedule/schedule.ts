@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { AdminDataService } from '../../core/services/admin-data.service';
 import { CrudModalService } from '../../core/services/crud-modal.service';
 import { RoleService } from '../../core/services/role.service';
+import { ToastService } from '../../core/services/toast.service';
 import { ListController } from '../../core/list-controller';
+import { parseDateRange, rangesOverlap } from '../../core/date-range.util';
 import { TableToolbar } from '../../shared/table-toolbar/table-toolbar';
 import { FieldDef, Offering, OfferingStatus, SessionStatus } from '../../core/models/admin.models';
 
@@ -40,6 +42,7 @@ const FIELDS = (courseTitles: string[]): FieldDef[] => [
 export class Schedule {
   private readonly data = inject(AdminDataService);
   private readonly modal = inject(CrudModalService);
+  private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   readonly roleService = inject(RoleService);
 
@@ -60,6 +63,27 @@ export class Schedule {
     this.router.navigate(['/enrollment']);
   }
 
+  private warnConflicts(values: Record<string, string | number>, excluding: Offering | null): void {
+    const range = parseDateRange(String(values['dates'] ?? ''));
+    if (!range) return;
+
+    const others = this.data.offerings().filter((o) => o !== excluding);
+    const conflicts = others.filter((o) => {
+      const otherRange = parseDateRange(o.dates);
+      if (!otherRange || !rangesOverlap(range, otherRange)) return false;
+      return o.instructor === values['instructor'] || o.branch === values['branch'];
+    });
+
+    conflicts.forEach((c) => {
+      const reason = c.instructor === values['instructor'] ? 'same instructor' : 'same branch';
+      this.toast.show(
+        `Schedule conflict: overlaps with "${c.course}" (${c.branch} · ${c.instructor}, ${c.dates}) — ${reason}.`,
+        'warning',
+        6000,
+      );
+    });
+  }
+
   addOffering(): void {
     this.modal.open({
       title: 'Add Class Offering',
@@ -75,6 +99,7 @@ export class Schedule {
         status: 'Draft',
       },
       onSave: (values) => {
+        this.warnConflicts(values, null);
         this.data.offerings.update((list) => [...list, { enrolled: 0, ...values } as Offering]);
       },
     });
@@ -87,6 +112,7 @@ export class Schedule {
       isEdit: true,
       values: { ...offering },
       onSave: (values) => {
+        this.warnConflicts(values, offering);
         this.data.offerings.update((list) => list.map((o) => (o === offering ? { ...o, ...values } as Offering : o)));
       },
       onDelete: () => {

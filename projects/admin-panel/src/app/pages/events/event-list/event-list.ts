@@ -2,7 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminDataService } from '../../../core/services/admin-data.service';
 import { CrudModalService } from '../../../core/services/crud-modal.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { ListController } from '../../../core/list-controller';
+import { formatDateFull, formatDateShort, parseDisplayDateTime, toDateTimeLocalValue } from '../../../core/date-time.util';
 import { TableToolbar } from '../../../shared/table-toolbar/table-toolbar';
 import { FilterTabs, FilterOption } from '../../../shared/filter-tabs/filter-tabs';
 import { AdminEvent, EventStatus, FieldDef } from '../../../core/models/admin.models';
@@ -20,11 +22,19 @@ const FIELDS: FieldDef[] = [
   { key: 'title', label: 'Event title', type: 'text' },
   { key: 'branch', label: 'Branch', type: 'select', options: ['USA', 'Canada', 'Australia'] },
   { key: 'location', label: 'Location', type: 'text' },
-  { key: 'dateFull', label: 'Date & time', type: 'text' },
+  { key: 'dateTime', label: 'Date & time', type: 'datetime' },
   { key: 'capacity', label: 'Capacity', type: 'number' },
   { key: 'status', label: 'Status', type: 'select', options: ['Draft', 'Scheduled', 'Published', 'Ongoing', 'Closed', 'Cancelled'] },
   { key: 'cover', label: 'Cover image', type: 'image' },
 ];
+
+/** Replaces the picker's transient `dateTime` value with the derived `dateFull` / `dateShort` display strings. */
+function deriveDateFields(values: Record<string, string | number>): Record<string, string | number> {
+  const { dateTime, ...rest } = values;
+  const date = new Date(String(dateTime));
+  if (Number.isNaN(date.getTime())) return rest;
+  return { ...rest, dateFull: formatDateFull(date), dateShort: formatDateShort(date) };
+}
 
 @Component({
   selector: 'app-event-list',
@@ -35,6 +45,7 @@ const FIELDS: FieldDef[] = [
 export class EventList {
   private readonly data = inject(AdminDataService);
   private readonly modal = inject(CrudModalService);
+  private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
 
   readonly statusColors = STATUS_COLORS;
@@ -69,7 +80,14 @@ export class EventList {
       title: 'Add Event',
       fields: FIELDS,
       isEdit: false,
-      values: { title: '', branch: 'USA', location: '', dateFull: '', capacity: 20, status: 'Draft' },
+      values: {
+        title: '',
+        branch: 'USA',
+        location: '',
+        dateTime: toDateTimeLocalValue(new Date()),
+        capacity: 20,
+        status: 'Draft',
+      },
       onSave: (values) => {
         this.data.events.update((list) => [
           ...list,
@@ -79,8 +97,7 @@ export class EventList {
             maybe: 0,
             cancel: 0,
             waitlist: 0,
-            dateShort: '',
-            ...values,
+            ...deriveDateFields(values),
           } as AdminEvent,
         ]);
       },
@@ -88,16 +105,30 @@ export class EventList {
   }
 
   editEvent(ev: AdminEvent): void {
+    const registeredCount = ev.going + ev.maybe;
     this.modal.open({
       title: 'Edit Event',
       fields: FIELDS,
       isEdit: true,
-      values: { ...ev },
+      values: { ...ev, dateTime: toDateTimeLocalValue(parseDisplayDateTime(ev.dateFull)) },
       onSave: (values) => {
-        this.data.events.update((list) => list.map((e) => (e.id === ev.id ? { ...e, ...values } as AdminEvent : e)));
+        const derived = deriveDateFields(values);
+        this.data.events.update((list) => list.map((e) => (e.id === ev.id ? { ...e, ...derived } as AdminEvent : e)));
+        if (derived['status'] === 'Cancelled' && ev.status !== 'Cancelled') {
+          this.notifications.add(
+            `"${ev.title}" was cancelled — ${registeredCount} registered guest${registeredCount === 1 ? '' : 's'} notified by email (simulated).`,
+          );
+        } else {
+          this.notifications.add(
+            `"${ev.title}" was updated — ${registeredCount} registered guest${registeredCount === 1 ? '' : 's'} notified of the changes (simulated).`,
+          );
+        }
       },
       onDelete: () => {
         this.data.events.update((list) => list.filter((e) => e.id !== ev.id));
+        this.notifications.add(
+          `"${ev.title}" was deleted — ${registeredCount} registered guest${registeredCount === 1 ? '' : 's'} notified (simulated).`,
+        );
       },
     });
   }
